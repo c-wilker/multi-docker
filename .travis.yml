@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t cwilk/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run cwilk/react-test npm ci_test -- --coverage
+
+after_success:
+  - docker build -t cwilk/multi-client ./client
+  - docker build -t cwilk/multi-nginx ./nginx
+  - docker build -t cwilk/multi-server ./server
+  - docker build -t cwilk/multi-worker ./worker
+  # Log in to Docker Hub
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push newly built images out to Docker Hub
+  - docker push cwilk/multi-client
+  - docker push cwilk/multi-nginx
+  - docker push cwilk/multi-server
+  - docker push cwilk/multi-worker
