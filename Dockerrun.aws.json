@@ -1,0 +1,36 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "client",
+            "image": "cwilk/multi-client",
+            "host": "client",
+            "essential": false
+        },
+        {
+            "name": "server",
+            "image": "cwilk/multi-server",
+            "host": "api",
+            "essential": false
+        },
+        {
+            "name": "worker",
+            "image": "cwilk/multi-worker",
+            "host": "worker",
+            "essential": false
+        },
+        {
+            "name": "nginx",
+            "image": "cwilk/multi-nginx",
+            "host": "nginx",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": ["client", "server"]
+        }
+    ]
+}
